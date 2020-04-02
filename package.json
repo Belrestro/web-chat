@@ -1,0 +1,20 @@
+{
+  "name": "web-chat",
+  "version": "1.0.0",
+  "description": "Web chat application",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src"
+  },
+  "keywords": [],
+  "author": "belrestro@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2"
+  },
+  "dependencies": {
+    "better-sqlite3": "^6.0.1"
+  }
+}
