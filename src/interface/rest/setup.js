@@ -1,22 +1,24 @@
 const apiRouter = require('./api');
-const echoRouter = require('./echo');
+const uiRouter = require('./ui');
 const {
   requestLogger,
   errorHandler,
   jsonBodyParser,
   useState,
+  options,
 } = require('./middleware');
 const Pipeline = require('../../lib/http/pipeline');
 
 const requestHandler = () => {
   const httpPipeline = new Pipeline();
   httpPipeline
-    // .use(errorHandler)
+    .use(errorHandler)
+    .use(options)
     .use(useState)
     .use(requestLogger)
     .use(jsonBodyParser)
-    .use(echoRouter)
-    .use(apiRouter);
+    .use(apiRouter)
+    .use(uiRouter);
   
   return httpPipeline.callback();
 }

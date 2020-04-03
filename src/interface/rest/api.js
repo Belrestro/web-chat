@@ -2,6 +2,7 @@ const Router = require('../../lib/http/router');
 const {
   userHandlers,
   chatHandlers,
+  contactHandlers,
 } = require('./handlers');
 
 const {
@@ -17,6 +18,7 @@ apiRouter
 
 apiRouter
   .use(userHandlers)
+  .use(contactHandlers)
   .use(chatHandlers);
 
 module.exports = apiRouter.routes();

@@ -8,12 +8,14 @@ const attachmentHandlers = require('./attachments');
 // Chat management
 router
   .get('/', chatManagementHandlers.listChats)
-  .post('/', chatManagementHandlers.createChat);
+  .post('/', chatManagementHandlers.createChat)
+  .get('/:id/invite', chatManagementHandlers.listUsersToInvite)
+  .post('/:id/invite', chatManagementHandlers.inviteToChat)
 
 // Chat massages
 router
   .get('/:id/messages', massageHandlers.listMessages)
-  .post('/:id/messages', massageHandlers.createMessage);
+  .post('/:id/messages', massageHandlers.createMessage)
 
 // File attachments
 router

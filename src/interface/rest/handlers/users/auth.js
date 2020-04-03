@@ -3,6 +3,7 @@ const AuthController = require('../../../../controls/auth');
 
 const { ExistenceError, ValidityError } = require('../../../../lib/errors');
 const { UserModel, ContactsModel } = require('../../../../models')
+const { sendNotificationToMany, NOTIFICATION_TYPES } = require('../../../ws');
 
 const CONTENT_TYPE = 'application/json';
 
@@ -19,6 +20,8 @@ const register = async (ctx) => {
     const createdUser = await UserRepository.create(user);
     const contacts = ContactsModel.from({ userId: createdUser.id });
     await ContactRepository.create(contacts);
+
+    sendNotificationToMany([], NOTIFICATION_TYPES.USER_CREATED, createdUser.serialize());
   } catch (err) {
     if (err instanceof ValidityError) {
       ctx.throw(400, err.message);

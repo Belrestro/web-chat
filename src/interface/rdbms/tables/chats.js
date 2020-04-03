@@ -12,10 +12,13 @@ class ChatsTable extends GenericTable {
   }
 
   static selectByUserId(userId) {
-    const stmt = this.cursor.prepare(`SELECT ${this._columns} FROM ${this._tableName}
-      WHERE participantIds REGEX \b?\b;`)
+    const stmt = this.cursor.prepare(`SELECT ${this._columns}
+        FROM ${this._tableName} WHERE (
+          participantIds LIKE '%,${userId}]' OR
+          participantIds LIKE '[${userId},%' OR
+          participantIds LIKE '%,${userId},%');`);
 
-    return stmt.run(userId);
+    return stmt.all();
   }
 }
 

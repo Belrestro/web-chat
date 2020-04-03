@@ -22,7 +22,13 @@ class UserRepository {
   static async findByLogin(login) {
     const userRecord = UsersTable.selectByLogin(login);
 
-    return UserModel.from(userRecord);
+    return userRecord ? UserModel.from(userRecord) : null;
+  }
+
+  static async findWhereIdsNotIn(userIds) {
+    const users = UsersTable.selectWhereUserIdsNotIn(userIds);
+
+    return users.map(UserModel.from);
   }
 }
 

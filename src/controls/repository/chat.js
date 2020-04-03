@@ -25,8 +25,8 @@ class ChatRepository {
     return chat ? ChatModel.from(chat) : null;
   }
 
-  static async findByUserId(ownerId) {
-    const chats = ChatsTable.selectWhere({ ownerId });
+  static async findByUserId(userId) {
+    const chats = ChatsTable.selectByUserId(userId);
 
     return chats.map(ChatModel.from);
   }
@@ -36,7 +36,7 @@ class ChatRepository {
   } 
 
   static async createMessage(senderId, chatId, message) {
-    const messageId = MessagesTable.insert({ ...message.serialize(), chatId });
+    const messageId = MessagesTable.insert({ ...message.serialize(), senderId, chatId });
     const messageRecord = MessagesTable.selectById(messageId);
 
     return MessageModel.from(messageRecord);

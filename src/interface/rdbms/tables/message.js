@@ -13,14 +13,14 @@ class MessageTable extends GenericTable {
 
   static selectByUserId(userId) {
     const stmt = this.cursor.prepare(`SELECT ${this._columns} FROM ${this._tableName}
-      WHERE userId = ? order by timestamp desc;`);
+      WHERE userId = ? order by timestamp asc;`);
 
     return stmt.all(userId);
   }
 
   static selectByChatId(chatId) {
     const stmt = this.cursor.prepare(`SELECT ${this._columns} FROM ${this._tableName}
-      WHERE chatId = ? order by timestamp desc;`);
+      WHERE chatId = ? order by timestamp asc;`);
 
     return stmt.all(chatId);
   }

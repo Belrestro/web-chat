@@ -1,0 +1,71 @@
+.active-chat {
+  width: calc(100% - 300px);
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+  height: 100%;
+}
+
+.active-chat .name {
+  margin-bottom: 30px;
+  padding: 10px;
+  text-transform: capitalize;
+}
+
+.send-message-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 0 2px black;
+  width: calc(100% - 1px);
+  box-sizing: border-box;
+  padding: 13px;
+  font-size: 17px;
+  padding-right: 45px;
+}
+
+.send-message-button {
+  position: absolute;
+  bottom: 4px;
+  right: 7px;
+  font-size: 25px;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #b9b9b9;
+  padding: 7px;
+  z-index: 2;
+}
+
+.send-message-button:hover {
+  background: #909090;
+}
+
+.active-chat-messages {
+  overflow-y: scroll;
+  height: calc(100% - 109px);
+}
+
+.active-chat-messages .message {
+  margin-bottom: 5px;
+}
+
+.active-chat-messages .message:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.message .bubble {
+  padding: 15px 40px;
+  display: inline-block;
+}
+.message.lefty .bubble {
+  background: #92a8fd;
+  border-radius: 17px 17px 17px 0;
+}
+
+.message.righty .bubble {
+  background: #d6d6d6;
+  border-radius: 17px 17px 0 17px;
+  float:right;
+}

@@ -1,10 +1,10 @@
 const { ChatRepository } = require('../../../../controls/repository');
 const { MessageModel } = require('../../../../models');
+const { sendNotificationToMany, NOTIFICATION_TYPES } = require('../../../ws');
 
 const CONTENT_TYPE = 'application/json'; 
 
 const listMessages = async (ctx) => {
-  console.log('messages');
   const { id } = ctx.params;
   const messages = await ChatRepository.getChatMessages(id);
 
@@ -28,6 +28,12 @@ const createMessage = async (ctx) => {
   
   const createdMessage = await ChatRepository
     .createMessage(user.id, id, message);
+
+  sendNotificationToMany(
+    chat.participantIds,
+    NOTIFICATION_TYPES.MESSAGE_CREATED,
+    createdMessage,
+  )
 
   ctx.status = 201;
   ctx.type = CONTENT_TYPE;

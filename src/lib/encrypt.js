@@ -12,11 +12,11 @@ const encrypt = (text) =>  {
   let encrypted = cipher.update(Buffer.from(text, 'utf-8'));
   encrypted = Buffer.concat([encrypted, cipher.final()]);
 
-  return encrypted.toString('base64');
+  return encrypted.toString('hex');
 }
 
 const decrypt = (text) => {
-  const encryptedText = Buffer.from(text, 'base64');
+  const encryptedText = Buffer.from(text, 'hex');
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
   const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
 

@@ -1,0 +1,91 @@
+.chat-sidebar {
+  width: 300px;
+  background: #171f2d;
+  height: 100%;
+  position: relative;
+}
+
+.chat-sidebar .switches {
+  display: flex;
+  height: 35px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-sidebar .switches button {
+  width: 50%;
+  box-sizing: border-box;
+  background: none;
+  color: white;
+  text-transform: uppercase;
+  border-right: 1px solid;
+  border-bottom: 1px solid gray;
+  height: 35px;
+  cursor: pointer;
+  outline: none;
+}
+
+.chat-sidebar .switches button:hover,
+.chat-sidebar .switches button.active {
+  background-color: rgba(255,255,255, .1);
+}
+
+.chat-sidebar .search-icon {
+  position: absolute;
+  top: 11px;
+  left: 6px;
+  color: gray;
+}
+
+.chat-sidebar.disabled {
+  pointer-events: none;
+}
+
+.chat-sidebar .chat-sidebar-filter {
+  width: 100%;
+  display: block;
+  background: white;
+  padding: 10px;
+  padding-left: 30px;
+  box-sizing: border-box;
+  font-size: 17px;
+}
+
+.chat-list {
+  overflow-y: scroll;
+  height: calc(100% - 36px);
+}
+
+.chat-list .chat-item {
+  color: white;
+  padding: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chat-list .chat-item:not(:last-child) {
+  border-bottom:1px solid white;
+}
+
+.chat-list .chat-item:hover {
+  cursor: pointer;
+  background:#43526d;
+}
+
+.chat-list .chat-item button {
+  float: right;
+  background: none;
+  color: white;
+  border: 1px solid;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+.chat-list .chat-item button:hover,
+.chat-list .chat-item button.active {
+  background: #6b6b6b;
+}
+
+.chat-list .chat-item button:not(:first-child) {
+  margin-right:5px;
+}

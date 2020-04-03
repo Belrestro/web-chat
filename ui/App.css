@@ -1,0 +1,23 @@
+/* Reset defaults */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+.component-container {
+  max-width: 1600px;
+  box-shadow: 0 2px 2px #a5a5a5;
+  background: #f1f1f1;
+  border-radius: 0 0 4px 4px;
+  margin: auto;
+  height: calc(100vh - 100px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  overflow: hidden;
+}

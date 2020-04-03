@@ -1,6 +1,6 @@
 const Context = require('./context');
 const Chain = require('../../lib/chain');
-const { Writable } = require('stream');
+const { Readable } = require('stream');
 
 class HttpPipeline extends Chain {
   callback () {
@@ -11,9 +11,12 @@ class HttpPipeline extends Chain {
       await this.execute(ctx);
 
       const { status, type } = ctx;
-
       // finalize response
       const headers = Object.fromEntries(ctx.headers.entries());
+
+      if (ctx.body instanceof Readable) {
+        return ctx.body.pipe(res);
+      }
 
       res.writeHead(status, {
         ...headers,
@@ -26,12 +29,6 @@ class HttpPipeline extends Chain {
         switch (contentType) {
           case 'application/json':
             body = JSON.stringify(ctx.body);
-            break;
-          case 'application/octet-stream':
-            if (ctx.body instanceof Writable) {
-              return res.pipe(ctx.body);
-            }
-            body = ctx.body;
             break;
           default:
             body = ctx.body.toString()

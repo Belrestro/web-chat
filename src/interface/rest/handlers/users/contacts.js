@@ -1,4 +1,4 @@
-const { ContactRepository } = require('../../../../controls/repository');
+const { ContactRepository, UserRepository } = require('../../../../controls/repository');
 const { ExistenceError } = require('../../../../lib/errors');
 
 const CONTENT_TYPE = 'application/json';
@@ -21,6 +21,15 @@ const findNewContact = async (ctx) => {
   ctx.type = CONTENT_TYPE;
   ctx.body = userList.map(user => user.serialize());
 };
+
+const findAll = async (ctx) => {
+  const { user } = ctx.state;
+  const userList = await UserRepository.findWhereIdsNotIn([user.id]);
+
+  ctx.status = 200;
+  ctx.type = CONTENT_TYPE;
+  ctx.body = userList.map(user => user.serialize());
+}
 
 const addNewContact = async (ctx) => {
   const { user } = ctx.state;
@@ -47,6 +56,7 @@ const removeUserContact = async (ctx) => {
 };
 
 module.exports = {
+  findAll,
   addNewContact,
   getUserContacts,
   findNewContact,

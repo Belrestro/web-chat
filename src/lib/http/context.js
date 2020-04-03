@@ -12,12 +12,13 @@ class HttpError extends Error {
 class Context {
   constructor(req, res) {
     const { url, method, headers } = req;
+    const currentContentType = headers['content-type'] || '';
     const { pathname: path, query } = URL.parse(url);
     const is = (types) => {
       const contentTypes = Array.isArray(types)
         ? types
         : [types];
-      return contentTypes.includes(headers['content-type']);
+      return contentTypes.some(type => currentContentType.startsWith(type));
     }
 
     const request = {
@@ -78,7 +79,7 @@ class Context {
   }
 
   setHeader(name, value) {
-    this[state].headers[name] = value;
+    this[state].headers.set(name, value)
   }
 
   get params() {
