@@ -9,7 +9,6 @@ const attachmentHandlers = require('./attachments');
 router
   .get('/', chatManagementHandlers.listChats)
   .post('/', chatManagementHandlers.createChat)
-  .get('/:id/invite', chatManagementHandlers.listUsersToInvite)
   .post('/:id/invite', chatManagementHandlers.inviteToChat)
 
 // Chat massages

@@ -11,7 +11,7 @@ class ChatRepository {
     }
     const participants = UsersTable.selectWhereUserIdsIn(participantIds.filter(id => id !== ownerId));
     if (!name) {
-      name = participants.map(p => p.login).join(', ');
+      name = participants.map(p => p.login).join(' & ');
     }
     const chatId = ChatsTable.insert({ ...chat.serialize(false), name, ownerId });
     const chatRecord = ChatsTable.selectById(chatId);
@@ -32,6 +32,12 @@ class ChatRepository {
   }
 
   static async update(id, chat) {
+    const users = UsersTable.selectWhereUserIdsIn(chat.participantIds);
+    chat.name = users
+      .filter(user => user.id !== chat.ownerId)
+      .map(user => user.login)
+      .join(' & ');
+
     return ChatsTable.updateById(id, chat.serialize(false));
   } 
 
