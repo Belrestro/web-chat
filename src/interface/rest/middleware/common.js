@@ -2,6 +2,7 @@ const errorHandler = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
+    console.log(err);
     const { message, code } = err;
 
     ctx.status = code || 500;
