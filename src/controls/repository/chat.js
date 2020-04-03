@@ -1,5 +1,5 @@
 const { ChatsTable, MessagesTable, UsersTable } = require('../../interface/rdbms/tables');
-const { ChatModel, MessageModel  } = require('../../models');
+const { ChatModel, MessageModel } = require('../../models');
 const { ValidityError } = require('../../lib/errors');
 
 class ChatRepository {
@@ -23,6 +23,19 @@ class ChatRepository {
     const chat = ChatsTable.selectById(id);
 
     return chat ? ChatModel.from(chat) : null;
+  }
+
+  static async deleteById(userId, chatId) {
+    const chatRecord = ChatsTable.selectById(chatId);
+    const chat = ChatModel.from(chatRecord);
+
+    if (chat.ownerId === userId) {
+      ChatsTable.deleteById(chatId);
+      MessagesTable.deleteByChatId(chatId);
+    } else {
+      chat.participantIds.filter(id => id !== userId);
+      ChatsTable.updateById(chatId, chat.serialize(false));
+    }
   }
 
   static async findByUserId(userId) {

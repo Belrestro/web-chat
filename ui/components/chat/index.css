@@ -6,6 +6,10 @@
   height: 100%;
 }
 
+.active-chat.disabled {
+  pointer-events: none;
+}
+
 .active-chat .name {
   margin-bottom: 30px;
   padding: 10px;
@@ -43,6 +47,53 @@
 .active-chat-messages {
   overflow-y: scroll;
   height: calc(100% - 109px);
+}
+
+.active-chat-header {
+  position: relative;
+}
+
+.active-chat-header .pane {
+  position: absolute;
+  right: 0;
+  top: 10px;
+}
+
+.active-chat-header .pane i {
+  cursor: pointer;
+  font-size:20px
+}
+
+.active-chat .pane-list {
+  width: 130px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  background: white;
+  box-shadow: 0 0 3px black;
+  border-radius: 1px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.active-chat .pane-list .pane-item {
+  max-width: 100%;
+  white-space: nowrap;
+  padding: 3px 10px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.active-chat .pane-list input {
+  width: 100%;
+  font-size: 14px;
+  padding: 3px 10px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.active-chat .pane-list .pane-item:hover {
+  background: #d6d6d6;
 }
 
 .active-chat-messages .message {

@@ -24,6 +24,12 @@ class MessageTable extends GenericTable {
 
     return stmt.all(chatId);
   }
+
+  static deleteByChatId(chatId) {
+    const stmt = this.cursor.prepare(`DELETE FROM ${this._tableName} where chatId = ?;`);
+
+    return !!stmt.run(chatId).changes;
+  }
 }
 
 module.exports = MessageTable;

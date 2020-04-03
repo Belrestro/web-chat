@@ -21,6 +21,16 @@ export const addChatToList = (chat) => ({
   type: ADD_CHAT_TO_LIST,
   chat,
 })
+export const REMOVE_CHAT_FROM_LIST = 'REMOVE_CHAT_FROM_LIST';
+export const removeChatFromList = (chatId) => ({
+  type: REMOVE_CHAT_FROM_LIST,
+  chatId,
+});
+export const UPDATE_CHAT_IN_LIST = 'UPDATE_CHAT_IN_LIST';
+export const updateChatInList = (chat) => ({
+  type: UPDATE_CHAT_IN_LIST,
+  chat,
+});
 
 export const requestChatList = () => {
   return (dispatch, _, apiEndpoint) => {
@@ -60,29 +70,7 @@ export const startChat = (participantIds, name) => {
   }
 }
 
-export const SET_ACTIVE_CHAT_INVITATION_LIST = 'SET_ACTIVE_CHAT_INVITATION_LIST';
-export const setActiveChatInvitationList = (invitationList) => ({
-  type: SET_ACTIVE_CHAT_INVITATION_LIST,
-  invitationList,
-});
-
-export const requestUsersInvitationList = (chatId) => {
-  return (dispatch, _, apiEndpoint) => {
-    dispatch(startChatProcessing());
-    const requestOptions = {
-      headers: getAuthHeader()
-    };
-
-    return axios.get(`${apiEndpoint}/chats/${chatId}/invite`, requestOptions)
-      .then(res => {
-
-        return res.data;
-      })
-      .finally(() => dispatch(finishChatProcessing()));
-  }
-}
-
-export const inviteToChat = (chatId, participantIds) => {
+export const inviteToChat = (chatId, userId) => {
   return (dispatch, _, apiEndpoint) => {
     dispatch(startChatProcessing());
     const requestOptions = {
@@ -92,10 +80,44 @@ export const inviteToChat = (chatId, participantIds) => {
       },
     };
 
-    const payload = JSON.stringify({ participantIds });
+    const payload = JSON.stringify({ userId });
 
     return axios.post(`${apiEndpoint}/chats/${chatId}/invite`, payload, requestOptions)
       .then(res => res.data)
+      .finally(() => dispatch(finishChatProcessing()));
+  }
+}
+
+export const removeChat = (chatId) => {
+  return (dispatch, _, apiEndpoint) => {
+    dispatch(startChatProcessing());
+    const requestOptions = {
+      headers: getAuthHeader(),
+    };
+
+    return axios.delete(`${apiEndpoint}/chats/${chatId}`, requestOptions)
+      .then(res => {
+        dispatch(removeChatFromList(chatId));
+        return res.data;
+      })
+      .finally(() => dispatch(finishChatProcessing()));
+  }
+}
+
+export const getChatById = (chatId) => {
+  return (dispatch, _, apiEndpoint) => {
+    dispatch(startChatProcessing());
+    const requestOptions = {
+      headers: getAuthHeader(),
+    };
+
+    return axios.get(`${apiEndpoint}/chats/${chatId}`, requestOptions)
+      .then(res => {
+        const chat = res.data;
+        dispatch(updateChatInList(chat))
+
+        return chat;
+      })
       .finally(() => dispatch(finishChatProcessing()));
   }
 }

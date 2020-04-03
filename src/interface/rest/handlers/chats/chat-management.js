@@ -1,6 +1,7 @@
 const { ChatRepository, UserRepository } = require('../../../../controls/repository');
 const { ValidityError } = require('../../../../lib/errors');
 const { ChatModel } = require('../../../../models');
+const { sendNotificationToMany, NOTIFICATION_TYPES } = require('../../../ws');
 
 const CONTENT_TYPE = 'application/json';
 
@@ -13,6 +14,8 @@ const createChat = async (ctx) => {
     const chatModel = ChatModel.from({ ...body, ownerId: user.id });
 
     chat = await ChatRepository.create(user.id, chatModel);
+
+    sendNotificationToMany(chat.participantIds, NOTIFICATION_TYPES.CHAT_CREATED, chat);
   } catch(err) {
     if (err instanceof ValidityError) {
       ctx.throw(400, err.message);
@@ -34,11 +37,10 @@ const listChats = async (ctx) => {
 };
 
 const inviteToChat = async (ctx) => {
-  const { id } = ctx.state;
+  const { id } = ctx.params;
   const { body } = ctx.request;
-  const { participantIds } = ChatModel.from(body);
   const chat = await ChatRepository.getById(id);
-  const distinct = new Set([...participantIds, ...chat.participantIds]);
+  const distinct = new Set([ body.userId, ...chat.participantIds]);
   
   chat.participantIds = [...distinct];
   await ChatRepository.update(id, chat);
@@ -46,18 +48,30 @@ const inviteToChat = async (ctx) => {
   ctx.status = 201;
 }
 
-const listUsersToInvite = async (ctx) => {
-  const { id } = ctx.state;
+const removeChat = async (ctx) => {
+  const { id } = ctx.params;
+  const { user } = ctx.state;
+
+  await ChatRepository.deleteById(user.id, id);
+
+  ctx.status = 204;
+};
+
+const showChat = async (ctx) => {
+  const { id } = ctx.params;
+
   const chat = await ChatRepository.getById(id);
-  const users = await UserRepository.findWhereIdsNotIn(chat.participantIds);
 
   ctx.type = CONTENT_TYPE;
-  ctx.body = user.map(user => user.serialize());
-}
+  ctx.body = chat.serialize();
+  ctx.status = 200;
+};
+
 
 module.exports = {
   createChat,
   listChats,
   inviteToChat,
-  listUsersToInvite,
+  removeChat,
+  showChat,
 };

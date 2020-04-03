@@ -54,8 +54,14 @@ const Login = ({ user, signIn, signUp }) => {
     <h3>Web chat application</h3>
 
     <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
-      <input type="text" value={login} disabled={user.isProcessing} onChange={handleInput(changeLogin)}/>
-      <input type="password" value={password} disabled={user.isProcessing} onChange={handleInput(changePassword)}/>
+      <input type="text" placeholder="login"
+        value={login}
+        disabled={user.isProcessing}
+        onChange={handleInput(changeLogin)}/>
+      <input type="password" placeholder="password"
+        value={password}
+        disabled={user.isProcessing}
+        onChange={handleInput(changePassword)}/>
       <div className="auth-form-success">{successMessage}</div>
       <div className="auth-form-error">{errorMessage}</div>
       <div className="auth-form-declaimer">    

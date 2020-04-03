@@ -8,6 +8,7 @@ import {
   addUserToContacts,
   deleteUserFromContacts,
 } from '../../actions/contacts';
+import { removeChat } from '../../actions/chats';
 import './index.css';
 
 const Sidebar = ({
@@ -23,11 +24,12 @@ const Sidebar = ({
   addToContacts,
   deleteFromContacts,
   inviteToChat,
+  deleteChat,
 }) => {
   const { chats: chatList } = chatState;
   const { availableContacts, userContacts } = contactsState;
   const [ searchValue, setSearchValue ] = useState('');
-  const [currentTab, setTab] = useState(0);
+  const [ currentTab, setTab] = useState(0);
   const [ filtered, setFiltered ] = useState([]);
   if (!chatState.initialized && !chatState.isProcessing) {
     markChatInitialized();
@@ -39,21 +41,18 @@ const Sidebar = ({
     requestContactList();
   }
   const filterList = (e) => {
-    const list = currentTab === 0
-      ? chatList
-      : availableContacts;
+    const list = currentTab === 0 ? chatList : availableContacts;
     const { value } = e.target;
     setFiltered(list.filter(item => {
       const prop = currentTab === 0 ? item.name : item.login;
-        
-      return prop.toLowerCase()
-        .indexOf(value.toLowerCase()) > -1;
+      return prop.toLowerCase().indexOf(value.toLowerCase()) > -1;
     }))
     setSearchValue(value);
   }
   const changeTab = (tabIndex) => {
-    setSearchValue('');
     setTab(tabIndex);
+    setSearchValue('');
+    setFiltered([]);
   };
 
   const hasActiveChat = (userId) => {
@@ -69,13 +68,13 @@ const Sidebar = ({
     const personal = hasActiveChat(userId);
 
     if (personal) {
-      setTab(0);
+      changeTab(0)
       selectChat(personal);
       return;
     }
     inviteToChat([userId, userState.user.id])
       .then((chat) => {
-        setTab(0);
+        changeTab(0)
         selectChat(chat)
       })
   }
@@ -83,7 +82,9 @@ const Sidebar = ({
   const chats = searchValue ? filtered : chatList;
   const contacts = searchValue
     ? filtered
-    : userContacts.map(id => availableContacts.find(c => c.id === 1));
+    : userContacts.map(id => {
+      return availableContacts.find(user => user.id === id);
+    });
 
   return (<aside className={`chat-sidebar
       ${(chatState.isProcessing || contactsState.isProcessing) ? 'disabled': ''}
@@ -101,26 +102,40 @@ const Sidebar = ({
       currentTab === 0
         ? <div className="chat-list">
           {chats.map((chat) => {
-            return <div onClick={() => selectChat(chat)} className="chat-item" key={chat.id}>{chat.name}</div>
+            return <div onClick={() => selectChat(chat)} className="chat-item" key={chat.id}>
+              {chat.name}
+              <i className="fa fa-trash-o" aria-hidden="true"
+                onClick={() => deleteChat(chat.id)}></i>
+            </div>
           })}
         </div>
         : <div className="chat-list">
           {contacts.map(contact => {
             return <div className="chat-item" key={contact.id}>
               {contact.login}
-              {
-                userContacts.includes(contact.id)
-                  ? <span>
-                      <button onClick={() => startChat(contact.id)}>chat</button>
-                      <button onClick={() => deleteFromContacts(contact.id)}>Remove</button>
-                    </span>
-                  : <button onClick={() => addToContacts(contact.id)}>Add</button>
+              { 
+                searchValue
+                  ? userContacts.includes(contact.id)
+                    ? (<span>
+                        <i className="fa fa-commenting" aria-hidden="true"
+                          onClick={() => startChat(contact.id)}></i>
+                        <i className="fa fa-trash-o" aria-hidden="true"
+                          onClick={() => deleteFromContacts(contact.id)}></i>
+                      </span>)
+                    : <i className="fa fa-plus" aria-hidden="true"
+                        onClick={() => addToContacts(contact.id)}></i>
+                  : (<span>
+                      <i className="fa fa-commenting" aria-hidden="true"
+                        onClick={() => startChat(contact.id)}></i>
+                      <i className="fa fa-trash-o" aria-hidden="true"
+                        onClick={() => deleteFromContacts(contact.id)}></i>
+                    </span>)
+                
               }
             </div>
           })}
         </div>
     }
-    
   </aside>)
 };
 
@@ -141,6 +156,7 @@ const mapDispatchToProps = (dispatch) => {
     requestContactList: () => dispatch(requestUserContactList()),
     addToContacts: (userId) => dispatch(addUserToContacts(userId)),
     deleteFromContacts: (userId) => dispatch(deleteUserFromContacts(userId)),
+    deleteChat: (chatId) => dispatch(removeChat(chatId)),
   }
 }; 
 

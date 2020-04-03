@@ -3,7 +3,7 @@ import user from './user'
 import chats from './chats'
 import contacts from './contacts'
 
-export default combineReducers({
+export const appReducer = combineReducers({
   user,
   chats,
   contacts,

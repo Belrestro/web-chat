@@ -8,7 +8,7 @@ const { sendNotificationToMany, NOTIFICATION_TYPES } = require('../../../ws');
 const CONTENT_TYPE = 'application/json';
 
 // TODO read this value from config
-const EXPIRATION_PERIOD = 1000 * 60 * 60 * 5; // 5 hours
+const EXPIRATION_PERIOD = 1000 * 60 * 60 * 24; // 24 hours
 
 const register = async (ctx) => {
   const { body } = ctx.request;

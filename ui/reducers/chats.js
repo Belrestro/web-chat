@@ -6,9 +6,10 @@ import {
   CHAT_PROCESSING_STARTED,
   CHAT_PROCESSING_FINISHED,
   ACTIVE_CHAT_INITIALIZED,
-  SET_ACTIVE_CHAT_INVITATION_LIST,
   SET_ACTIVE_CHAT_MESSAGES,
   ADD_MESSAGE_TO_ACTIVE_CHAT,
+  REMOVE_CHAT_FROM_LIST,
+  UPDATE_CHAT_IN_LIST,
 } from '../actions/chats'
 
 const DEFAULT_STATE = {
@@ -52,7 +53,7 @@ const chat = (state = DEFAULT_STATE , action) => {
       const { chat } = action;
       return {
         ...state,
-        chats: [ ...state.activeChat.chats, chat ]
+        chats: [ ...state.chats, chat ]
       }
     case SET_ACTIVE_CHAT:
       return {
@@ -61,14 +62,6 @@ const chat = (state = DEFAULT_STATE , action) => {
           ...action.chat,
           messages: [],
           invitationList: [],
-        }
-      }
-    case SET_ACTIVE_CHAT_INVITATION_LIST:
-      return {
-        ...state,
-        activeChat: {
-          ...action.chat,
-          invitationList: action.invitationList,
         }
       }
     case SET_ACTIVE_CHAT_MESSAGES:
@@ -86,6 +79,35 @@ const chat = (state = DEFAULT_STATE , action) => {
           ...state.activeChat,
           messages: [...state.activeChat.messages, action.message],
         }
+      }
+    case UPDATE_CHAT_IN_LIST:
+      const updated = action.chat;
+      const activeChat = state.activeChat
+        && state.activeChat.id === updated.id
+          ? { ...state.activeChat, ...updated }
+          : state.activeChat;
+      return {
+        ...state,
+        chats: state.chats.map(chat => {
+          if (chat.id === updated.id) {
+            Object.assign(chat, updated)
+          }
+          return chat;
+        }),
+        activeChat,
+      }
+    case REMOVE_CHAT_FROM_LIST:
+      const { chatId } = action;
+      const newActiveChat = state.activeChat
+        && state.activeChat.id === chatId
+          ? null
+          : state.activeChat;
+      return {
+        ...state,
+        chats: state.chats.filter(chat => {
+          return chat.id !== chatId;
+        }),
+        activeChat: newActiveChat,
       }
     default:
       return state;

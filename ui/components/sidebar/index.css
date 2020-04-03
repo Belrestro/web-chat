@@ -25,9 +25,13 @@
   outline: none;
 }
 
-.chat-sidebar .switches button:hover,
-.chat-sidebar .switches button.active {
+.chat-sidebar .switches button:hover {
   background-color: rgba(255,255,255, .1);
+}
+
+.chat-sidebar .switches button.active {
+  background-color: rgba(255,255,255, .3);
+    font-weight: bold;
 }
 
 .chat-sidebar .search-icon {
@@ -52,13 +56,13 @@
 }
 
 .chat-list {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: calc(100% - 36px);
 }
 
 .chat-list .chat-item {
   color: white;
-  padding: 10px;
+  padding: 10px 0px 10px 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -72,20 +76,14 @@
   background:#43526d;
 }
 
-.chat-list .chat-item button {
+.chat-list .chat-item i {
   float: right;
   background: none;
   color: white;
-  border: 1px solid;
   padding: 2px 5px;
   cursor: pointer;
 }
 
-.chat-list .chat-item button:hover,
-.chat-list .chat-item button.active {
-  background: #6b6b6b;
-}
-
-.chat-list .chat-item button:not(:first-child) {
+.chat-list .chat-item i:not(:first-child) {
   margin-right:5px;
 }

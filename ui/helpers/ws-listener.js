@@ -1,6 +1,7 @@
 import { wsEndpoint } from '../config';
 import { addMessageToActiveChat } from '../actions/chats';
 import { addUserToAvailable } from '../actions/contacts';
+import { addChatToList } from '../actions/chats'
 import { getAuthToken } from './auth-header';
 
 const NOTIFICATION_TYPES = {
@@ -18,6 +19,8 @@ export const listenWsUpdates = (dispatch) => {
           return dispatch(addMessageToActiveChat(parsed.data));
         case NOTIFICATION_TYPES.USER_CREATED:
           return dispatch(addUserToAvailable(parsed.data));
+        case NOTIFICATION_TYPES.CHAT_CREATED:
+          return dispatch(addChatToList(parsed.data))
         default:
           return;
       }
