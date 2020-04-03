@@ -9,7 +9,7 @@ const { setupDBInterface } = require('./interface/rdbms/setup');
 setupDBInterface(rdbms.createClient());
 
 // Initiate http server
-const server = createServer(process.env.port || 3000, requestHandler());
+const server = createServer(process.env.port || 80, requestHandler());
 createWebSocketServer(server.httpServer);
 
 server.start();
