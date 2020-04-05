@@ -10,6 +10,7 @@ router
   .get('/', chatManagementHandlers.listChats)
   .post('/', chatManagementHandlers.createChat)
   .get('/:id', chatManagementHandlers.showChat)
+  .update('/:id', chatManagementHandlers.updateChat)
   .delete('/:id', chatManagementHandlers.removeChat)
   .post('/:id/invite', chatManagementHandlers.inviteToChat)
 

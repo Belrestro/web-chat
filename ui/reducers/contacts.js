@@ -7,7 +7,7 @@ import {
   CONTACTS_PROCESSING_STARTED,
   SET_ALL_AVAILABLE_CONTACTS,
   SET_CONTACTS_LIST
-} from '../../src/actions/contacts';
+} from '../actions/contacts';
 
 const DEFAULT_STATE = {
   initialized: false,

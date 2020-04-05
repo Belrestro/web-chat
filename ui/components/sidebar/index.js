@@ -103,7 +103,12 @@ const Sidebar = ({
         ? <div className="chat-list">
           {chats.map((chat) => {
             return <div onClick={() => selectChat(chat)} className="chat-item" key={chat.id}>
-              {chat.name}
+              <i className="fa fa-comments-o" aria-hidden="true"></i>
+              {chat.name || chat.participantIds && chat.participantIds.reduce((acc, id) => {
+                const user = contactsState.availableContacts.find(u => u.id === id);
+                if (user) acc.push(user.login);
+                return acc;
+              }, []).join(' & ')}
               <i className="fa fa-trash-o" aria-hidden="true"
                 onClick={() => deleteChat(chat.id)}></i>
             </div>

@@ -9,10 +9,6 @@ class ChatRepository {
     if (!participantIds || participantIds.length < 2) {
       throw new ValidityError('Chat should have at least 2 participants');
     }
-    const participants = UsersTable.selectWhereUserIdsIn(participantIds.filter(id => id !== ownerId));
-    if (!name) {
-      name = participants.map(p => p.login).join(' & ');
-    }
     const chatId = ChatsTable.insert({ ...chat.serialize(false), name, ownerId });
     const chatRecord = ChatsTable.selectById(chatId);
 
@@ -33,7 +29,7 @@ class ChatRepository {
       ChatsTable.deleteById(chatId);
       MessagesTable.deleteByChatId(chatId);
     } else {
-      chat.participantIds.filter(id => id !== userId);
+      chat.participantIds = chat.participantIds.filter(id => id !== userId);
       ChatsTable.updateById(chatId, chat.serialize(false));
     }
   }
@@ -45,12 +41,6 @@ class ChatRepository {
   }
 
   static async update(id, chat) {
-    const users = UsersTable.selectWhereUserIdsIn(chat.participantIds);
-    chat.name = users
-      .filter(user => user.id !== chat.ownerId)
-      .map(user => user.login)
-      .join(' & ');
-
     return ChatsTable.updateById(id, chat.serialize(false));
   } 
 

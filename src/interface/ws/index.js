@@ -3,6 +3,8 @@ const { clients } = require('../../clients/ws');
 const NOTIFICATION_TYPES = {
   MESSAGE_CREATED: 'MESSAGE_CREATED',
   CHAT_CREATED: 'CHAT_CREATED',
+  CHAT_UPDATED: 'CHAT_UPDATED',
+  CHAT_DELETED: 'CHAT_DELETED',
   USER_CREATED: 'USER_CREATED',
 };
 
@@ -25,7 +27,7 @@ const sendNotification = async (userId, type, data) => {
 const sendNotificationToMany = async (userIds, type, data) => {
   try {
     if (!userIds || userIds.length === 0 ) {
-      userIds = clients.keys();
+      userIds = [...clients.keys()];
     }
     await Promise.all(userIds.map(id => {
       return sendNotification(id, type, data);

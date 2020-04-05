@@ -12,7 +12,7 @@ const store = createStore(
   appReducer,
   applyMiddleware(
     thunk.withExtraArgument(apiEndpoint),
-    createLogger()
+    // createLogger()
   )
 )
 

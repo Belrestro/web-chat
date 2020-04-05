@@ -117,5 +117,5 @@ dist
 #vscode
 .vscode/
 
-#
+# Sqlite
 *.db

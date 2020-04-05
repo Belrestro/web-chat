@@ -70,6 +70,28 @@ export const startChat = (participantIds, name) => {
   }
 }
 
+export const updateChat = (chat) => {
+  return (dispatch, _, apiEndpoint) => {
+    dispatch(startChatProcessing());
+    const requestOptions = {
+      headers: {
+        ...getAuthHeader(),
+        'content-type': 'application/json',
+      },
+    };
+
+    const payload = JSON.stringify(chat);
+
+    return axios.update(`${apiEndpoint}/chats`, payload, requestOptions)
+      .then(res => {
+        dispatch(updateChatInList(chat));
+
+        return res.data;
+      })
+      .finally(() => dispatch(finishChatProcessing()));
+  }
+}
+
 export const inviteToChat = (chatId, userId) => {
   return (dispatch, _, apiEndpoint) => {
     dispatch(startChatProcessing());

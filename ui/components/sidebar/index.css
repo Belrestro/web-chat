@@ -23,15 +23,18 @@
   height: 35px;
   cursor: pointer;
   outline: none;
+  transition: .4s;
+  border-radius: 5px 5px 0 0;
 }
 
-.chat-sidebar .switches button:hover {
-  background-color: rgba(255,255,255, .1);
+.chat-sidebar .switches button:hover:not(.active) {
+  background: gray;
+  font-weight: bold;
 }
 
 .chat-sidebar .switches button.active {
-  background-color: rgba(255,255,255, .3);
-    font-weight: bold;
+  background: lightgray;
+  color:black;
 }
 
 .chat-sidebar .search-icon {

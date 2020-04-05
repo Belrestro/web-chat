@@ -1,7 +1,11 @@
 const { ChatRepository, UserRepository } = require('../../../../controls/repository');
 const { ValidityError } = require('../../../../lib/errors');
 const { ChatModel } = require('../../../../models');
-const { sendNotificationToMany, NOTIFICATION_TYPES } = require('../../../ws');
+const {
+  sendNotification,
+  sendNotificationToMany,
+  NOTIFICATION_TYPES
+} = require('../../../ws');
 
 const CONTENT_TYPE = 'application/json';
 
@@ -27,6 +31,29 @@ const createChat = async (ctx) => {
   ctx.body = chat.serialize();
 };
 
+const updateChat = async (ctx) => {
+  const { body } = ctx.request;
+
+  let chat;
+  try {
+    chat = ChatModel.from(body);
+    const existingChat = await ChatRepository.getById(chat.id);
+  
+    if (!existingChat) ctx.throw(404);
+    
+    chat.participantIds = existingChat.participantIds;
+    await ChatRepository.update(chat.id, chat);
+    sendNotificationToMany(chat.participantIds, NOTIFICATION_TYPES.CHAT_UPDATED, chat);
+  } catch(err) {
+    if (err instanceof ValidityError) {
+      ctx.throw(400, err.message);
+    }
+    ctx.throw(500);
+  }
+  ctx.status = 204;
+  ctx.type = CONTENT_TYPE;
+}
+
 const listChats = async (ctx) => {
   const { user } = ctx.state;
   const list = await ChatRepository.findByUserId(user.id);
@@ -38,12 +65,15 @@ const listChats = async (ctx) => {
 
 const inviteToChat = async (ctx) => {
   const { id } = ctx.params;
-  const { body } = ctx.request;
+  const { userId } = ctx.request.body;
   const chat = await ChatRepository.getById(id);
-  const distinct = new Set([ body.userId, ...chat.participantIds]);
+  const distinct = new Set([ userId, ...chat.participantIds]);
   
   chat.participantIds = [...distinct];
   await ChatRepository.update(id, chat);
+
+  sendNotificationToMany(chat.participantIds, NOTIFICATION_TYPES.CHAT_UPDATED, chat);
+  sendNotification(userId, NOTIFICATION_TYPES.CHAT_CREATED, chat);
 
   ctx.status = 201;
 }
@@ -52,7 +82,18 @@ const removeChat = async (ctx) => {
   const { id } = ctx.params;
   const { user } = ctx.state;
 
+  const chat = await ChatRepository.getById(id);
+
+  if (!chat) ctx.throw(404);
+
   await ChatRepository.deleteById(user.id, id);
+  const existingChat = await ChatRepository.getById(id);
+  if (existingChat) {
+    sendNotificationToMany(existingChat.participantIds, NOTIFICATION_TYPES.CHAT_UPDATED, existingChat);
+  } else {
+    sendNotificationToMany(chat.participantIds, NOTIFICATION_TYPES.CHAT_DELETED, chat);
+  }
+  
 
   ctx.status = 204;
 };
@@ -70,6 +111,7 @@ const showChat = async (ctx) => {
 
 module.exports = {
   createChat,
+  updateChat,
   listChats,
   inviteToChat,
   removeChat,

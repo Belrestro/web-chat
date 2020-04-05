@@ -6,6 +6,7 @@ import {
   initializeActiveChat,
   inviteToChat,
   getChatById,
+  updateChat,
 } from '../../actions/chats';
 import './index.css';
 
@@ -17,9 +18,10 @@ const Chat = ({
   setMessages,
   initializeChat,
   inviteUserToChat,
-  updateChat,
+  renewChat,
 }) => {
   const { activeChat } = chatState;
+  const { participantIds = [] } = activeChat || {};
 
   if (activeChat && !activeChat.initialized) {
     initializeChat()
@@ -45,10 +47,10 @@ const Chat = ({
   const inviteUser = (userId) => {
     inviteUserToChat(activeChat.id, userId)
       .then(() => {
-        activeChat.participantIds.push(userId);
+        participantIds.push(userId);
         setPaneSearchValue('')
         toggleInvitePane();
-        updateChat(activeChat.id)
+        renewChat(activeChat.id)
       })
   }
 
@@ -67,12 +69,12 @@ const Chat = ({
     setInvitePaneVisible(!invitePaneVisible);
   }
 
-  let userInviteList = []
+  let userInviteList = [];
   if (activeChat) {
     userInviteList = contactsState.availableContacts
       .filter(user => {
-        const participatingAlready = activeChat.participantIds
-          && activeChat.participantIds.includes(user.id);
+        const participatingAlready = participantIds
+          && participantIds.includes(user.id);
         const isInUserContacts = contactsState.userContacts
           .includes(user.id);
 
@@ -84,11 +86,16 @@ const Chat = ({
           .indexOf(paneSearchValue.toLocaleLowerCase()) > -1;
       });
   }
-    
+
+  const chatName = activeChat && (activeChat.name || participantIds.reduce((acc, id) => {
+    const user = contactsState.availableContacts.find(u => u.id === id);
+    if (user) acc.push(user.login);
+    return acc;
+  }, []).join(' & '));
 
   return (<main className={`active-chat ${chatState.isProcessing ? 'disabled' : ''}`}>
     <div className="active-chat-header">
-      <h3 className="name">{activeChat && activeChat.name}</h3>
+      <h3>>> {chatName}</h3>
       {
         activeChat && <div className="pane">
           <i onClick={toggleInvitePane} className="fa fa-plus" aria-hidden="true"></i>
@@ -137,7 +144,8 @@ const mapDispatchToProps = dispatch => ({
   setMessages: (chatId) => dispatch(requestChatMessages(chatId)),
   initializeChat: () => dispatch(initializeActiveChat()),
   inviteUserToChat: (chatId, userId) => dispatch(inviteToChat(chatId, userId)),
-  updateChat: (chatId) => dispatch(getChatById(chatId))
+  renewChat: (chatId) => dispatch(getChatById(chatId)),
+  updateChat: (chat) => dispatch(updateChat(chat)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

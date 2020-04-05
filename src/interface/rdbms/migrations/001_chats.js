@@ -2,7 +2,7 @@ const TABLE_NAME = `chats`;
 
 const schema = {
   id: 'INTEGER PRIMARY KEY AUTOINCREMENT',
-  name: 'TEXT NOT NULL',
+  name: 'TEXT',
   ownerId: 'INTEGER',
   participantIds: 'TEXT'
 };
