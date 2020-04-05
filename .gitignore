@@ -119,3 +119,6 @@ dist
 
 # Sqlite
 *.db
+
+# build
+public/bundle.js
